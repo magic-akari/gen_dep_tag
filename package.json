@@ -2,9 +2,10 @@
 	"name": "gen_dep_tag",
 	"version": "0.0.0",
 	"description": "Generate HTML tag from node_modules for CDN usage",
-	"main": "index.js",
+	"main": "lib/index.js",
+	"type": "module",
 	"scripts": {
-		"test": "echo \"Error: no test specified\" && exit 1"
+		"build": "tsc"
 	},
 	"packageManager": "pnpm@8.13.1",
 	"repository": {
@@ -16,5 +17,9 @@
 	"bugs": {
 		"url": "https://github.com/magic-akari/gen_dep_tag/issues"
 	},
-	"homepage": "https://github.com/magic-akari/gen_dep_tag#readme"
+	"homepage": "https://github.com/magic-akari/gen_dep_tag#readme",
+	"devDependencies": {
+		"@types/node": "^20.10.5",
+		"typescript": "^5.3.3"
+	}
 }
