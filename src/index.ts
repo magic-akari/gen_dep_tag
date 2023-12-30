@@ -5,6 +5,7 @@ import { jsdelivr, type CDN } from "./cdn.js";
 import { sri } from "./sri.js";
 
 export * from "./cdn.js";
+export * from "./presets.js";
 
 function pkgVersion(pkgName: string): string {
 	return pkgJson(pkgName).version || "";
@@ -31,7 +32,7 @@ function resolveEntry(pkgName: string): string {
 		return package_json.jsdelivr;
 	}
 
-	if (package_json.browser) {
+	if (typeof package_json.browser === "string") {
 		return package_json.browser;
 	}
 
@@ -42,11 +43,7 @@ function resolveEntry(pkgName: string): string {
 	throw Error(`Cannot resolve entry for package ${pkgName}`);
 }
 
-function tag(
-	packageName: string,
-	algorithm: string | boolean,
-	filePath?: string
-) {
+function tag(packageName: string, algorithm: string | boolean, filePath?: string) {
 	let file_path = filePath || resolveEntry(packageName);
 	if (file_path.startsWith("./")) {
 		file_path = file_path.slice(2);
@@ -61,7 +58,6 @@ function tag(
 	}
 
 	return {
-		name: packageName,
 		version,
 		path: file_path,
 		integrity,
@@ -70,34 +66,51 @@ function tag(
 
 type Algorithm = "sha256" | "sha384" | "sha512" | (string & {});
 
-type Config =
-	| {
-			sri: Algorithm | true;
-			cdn?: CDN;
-	  }
-	| { sri?: false; cdn?: CDN };
+interface Source {
+	name: string;
+	/**
+	 * path of the file relative to the package root
+	 * usually the `main` field in package.json
+	 */
+	entry?: string;
+}
 
-type ResultType<T> = T extends { sri: string | true }
-	? { url: string; integrity: string }
-	: { url: string };
+type UrlOnly = {
+	url: string;
+};
 
-export function tagBuilder<T extends Config>(config: T) {
-	const algorithm = config.sri || false;
-	const cdn = config.cdn || jsdelivr;
+type UrlAndIntegrity = {
+	url: string;
+	integrity: string;
+};
 
-	return (packageName: string, filePath?: string): ResultType<T> => {
-		const { name, version, path, integrity } = tag(
-			packageName,
-			algorithm,
-			filePath
-		);
+type ReturnFn = (source: Source | string) => UrlOnly;
+type ReturnFnWithSri = (source: Source | string) => UrlAndIntegrity;
+
+export function tagBuilder(config: { sri: Algorithm | true; cdn?: CDN }): ReturnFnWithSri;
+export function tagBuilder(config?: { sri?: undefined | false; cdn?: CDN }): ReturnFn;
+export function tagBuilder(config?: any): ReturnFn | ReturnFnWithSri {
+	const algorithm = config?.sri || false;
+	const cdn = config?.cdn || jsdelivr;
+
+	return (source: Source | string) => {
+		let name: string, entry: string | undefined;
+
+		if (typeof source === "string") {
+			name = source;
+		} else {
+			name = source.name;
+			entry = source.entry;
+		}
+
+		const { version, path, integrity } = tag(name, algorithm, entry);
 
 		const url = cdn(name, version, path);
 
 		if (algorithm) {
-			return { url } as ResultType<T>;
+			return { url } as UrlOnly;
 		} else {
-			return { url, integrity } as ResultType<T>;
+			return { url, integrity } as UrlAndIntegrity;
 		}
 	};
 }
