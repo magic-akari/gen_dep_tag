@@ -8,6 +8,7 @@
 	"scripts": {
 		"build": "tsc",
 		"fix:fmt": "dprint fmt",
+		"check:type": "tsc --noEmit",
 		"check:fmt": "dprint check",
 		"check:lint": "oxlint src"
 	},
