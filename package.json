@@ -1,6 +1,6 @@
 {
 	"name": "gen_dep_tag",
-	"version": "0.0.1",
+	"version": "0.0.2",
 	"description": "Generate HTML tag from node_modules for CDN usage",
 	"main": "lib/index.js",
 	"type": "module",
