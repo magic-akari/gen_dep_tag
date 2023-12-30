@@ -43,7 +43,7 @@ function resolveEntry(pkgName: string): string {
 	throw Error(`Cannot resolve entry for package ${pkgName}`);
 }
 
-function tag(packageName: string, algorithm: string | boolean, filePath?: string) {
+function tag(packageName: string, algorithm: string | false, filePath?: string) {
 	let file_path = filePath || resolveEntry(packageName);
 	if (file_path.startsWith("./")) {
 		file_path = file_path.slice(2);
@@ -51,11 +51,7 @@ function tag(packageName: string, algorithm: string | boolean, filePath?: string
 
 	const local_path = pkgPath(packageName, file_path);
 	const version = pkgVersion(packageName);
-	let integrity = "";
-
-	if (algorithm) {
-		integrity = sri(local_path, "sha256");
-	}
+	const integrity = algorithm ? sri(local_path, algorithm) : "";
 
 	return {
 		version,
@@ -90,7 +86,9 @@ type ReturnFnWithSri = (source: Source | string) => UrlAndIntegrity;
 export function tagBuilder(config: { sri: Algorithm | true; cdn?: CDN }): ReturnFnWithSri;
 export function tagBuilder(config?: { sri?: undefined | false; cdn?: CDN }): ReturnFn;
 export function tagBuilder(config?: any): ReturnFn | ReturnFnWithSri {
-	const algorithm = config?.sri || false;
+	const sri = config?.sri || false;
+	const algorithm: Algorithm | false = sri === true ? "sha256" : sri;
+
 	const cdn = config?.cdn || jsdelivr;
 
 	return (source: Source | string) => {
@@ -108,9 +106,9 @@ export function tagBuilder(config?: any): ReturnFn | ReturnFnWithSri {
 		const url = cdn(name, version, path);
 
 		if (algorithm) {
-			return { url } as UrlOnly;
-		} else {
 			return { url, integrity } as UrlAndIntegrity;
+		} else {
+			return { url } as UrlOnly;
 		}
 	};
 }

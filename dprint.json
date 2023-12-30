@@ -1,5 +1,5 @@
 {
-	"includes": ["src", "./*.{json,md}"],
+	"includes": ["src/**/*.ts", "./*.{json,md}"],
 	"useTabs": true,
 	"indentWidth": 4,
 	"lineWidth": 120,

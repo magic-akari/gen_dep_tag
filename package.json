@@ -10,7 +10,7 @@
 		"fix:fmt": "dprint fmt",
 		"check:type": "tsc --noEmit",
 		"check:fmt": "dprint check",
-		"check:lint": "oxlint src"
+		"check:lint": "oxlint src -D correctness -D pedantic"
 	},
 	"packageManager": "pnpm@8.13.1",
 	"files": [
