@@ -30,7 +30,7 @@
 	"devDependencies": {
 		"@types/node": "^20.10.5",
 		"dprint": "^0.45.0",
-		"oxlint": "^0.0.22",
+		"oxlint": "^0.1.0",
 		"typescript": "^5.3.3"
 	}
 }
