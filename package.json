@@ -28,9 +28,9 @@
 	},
 	"homepage": "https://github.com/magic-akari/gen_dep_tag#readme",
 	"devDependencies": {
-		"@types/node": "^20.10.5",
-		"dprint": "^0.45.0",
-		"oxlint": "^0.1.0",
-		"typescript": "^5.3.3"
+		"@types/node": "^20.12.11",
+		"dprint": "^0.45.1",
+		"oxlint": "^0.3.4",
+		"typescript": "^5.4.5"
 	}
 }
