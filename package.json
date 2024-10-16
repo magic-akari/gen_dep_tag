@@ -12,7 +12,7 @@
 		"check:fmt": "dprint check",
 		"check:lint": "oxlint src -D correctness -D pedantic"
 	},
-	"packageManager": "pnpm@9.4.0",
+	"packageManager": "pnpm@9.12.2",
 	"files": [
 		"src",
 		"lib"
